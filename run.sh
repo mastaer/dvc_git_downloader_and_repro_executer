@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "VERSION 0.3"
+echo "VERSION 0.4"
 
 #
 # $1 repository i.e.: git.tools.f4.htw-berlin.de
@@ -13,8 +13,11 @@ echo "VERSION 0.3"
 # $8 password of ssh access to dvc
 # $9 git branchname to checkout
 # $10 path to dvc server
+# $11 own git email
 
 
+git config --global user.email "${11}"
+git config --global user.name "$2"
 
 
 

@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-echo "VERSION 0.4"
+echo "VERSION 0.5"
 
 #
 # $1 repository i.e.: git.tools.f4.htw-berlin.de

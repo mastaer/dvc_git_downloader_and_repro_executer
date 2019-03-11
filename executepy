@@ -62,9 +62,7 @@ if __name__ == '__main__':
     command = 'cd ' + git_working_repository_name
     subprocess.call(command, shell=True)
 
-    filecontent = "\n['remote \"nas\"']\nurl = ssh://"+dvc_own_username+"@"
-                    +dvc_servername+dvc_path_to_working_repository+"\npassword = '"
-                    +dvc_own_password+"'\n\n[core]\nremote = nas"
+    filecontent = "\n['remote \"nas\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
     command = "echo " + filecontent + " > .dvc/config.local"
     subprocess.check_output(command, shell=True)
 

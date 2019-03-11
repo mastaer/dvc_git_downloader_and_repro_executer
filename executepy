@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 import json
 import subprocess
+import os
 
 print('Start executer-python [version 0.1]')
 
@@ -46,44 +47,53 @@ dvc_own_username = dvc_authentication_json['username']
 dvc_own_password = dvc_authentication_json['password']
 
 if __name__ == '__main__':
-
+    print('SET GIT GLOBAL CONFIGURATIONS')
     command = 'git config --global user.email ' + git_own_email
     subprocess.check_output(command, shell=True)
     command = 'git config --global user.name ' + git_own_username
     subprocess.check_output(command, shell=True)
 
 
+    print('CLONE GIT REPOSITORY')
     # clone repository
     #git clone https://$2:$3@$1/$4/$5/
     git_complete_path_to_repo = 'https://' + git_own_username+":"+git_own_password+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name
     command = 'git clone ' + git_complete_path_to_repo
     subprocess.check_output(command, shell=True)
 
-    command = 'cd ' + git_working_repository_name
-    subprocess.call(command, shell=True)
+    print('CD TO PATH')
+    os.chdir(git_working_repository_name[:-4])
 
-    filecontent = "\n['remote \"nas\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
-    command = "echo " + filecontent + " > .dvc/config.local"
+    print('WRITE TO config.local FILE')
+    filecontent = "\n['remote \\\"nas\\\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
+    command = "echo \"" + filecontent + "\" > .dvc/config.local"
     subprocess.check_output(command, shell=True)
 
+    print('SWITCH GIT BRANCH')
     command = 'git checkout ' + git_name_of_branch
     subprocess.check_output(command, shell=True)
 
+    print('PULL FROM DVC')
     command = 'dvc pull'
     subprocess.check_output(command, shell=True)
 
+    print('START DVC REPRO -P')
     command = 'dvc repro -P'
     subprocess.check_output(command, shell=True)
 
+    print('COMMIT AT GIT')
     command = "git commit -m 'run all pipelines of the branch "+git_name_of_branch+"'"
     subprocess.check_output(command, shell=True)
 
+    print('COMMIT AT DVC')
     command = "dvc commit"
     subprocess.check_output(command, shell=True)
 
+    print('PUSH TO DVC')
     command = "dvc push"
     subprocess.check_output(command, shell=True)
 
+    print('PUSH TO GIT')
     command = "git push "+git_complete_path_to_repo+" --all"
     subprocess.check_output(command, shell=True)
 

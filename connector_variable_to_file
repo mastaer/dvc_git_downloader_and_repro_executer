@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+import json
+import sys
+import getpass
+import os
+from shutil import copyfile
+
+def receive(access, internals):
+
+    with open(internals) as json_data:
+        d = json.load(json_data)
+    copyfile(access, d)
+    sys.exit(0)
+
+def receive_validate(access, internals):
+    try:
+        json.loads(access)
+        print('This is a valid file.')
+        sys.exit(0)
+
+    except ValueError as e:
+        print('invalid json: %s' % e)
+        sys.exit(1) # or: raise
+
+    
+
+def receive_cleanup(internals):
+    with open(internals) as json_data:
+        d = json.load(json_data)
+    os.remove(d['path'])
+    sys.exit(0)
+
+
+if __name__ == '__main__':
+    
+    parser = ArgumentParser()
+    subparsers = parser.add_subparsers(dest='subparser')
+
+    parser_a = subparsers.add_parser('receive')
+    parser_a.add_argument(
+        'access',help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+    parser_a.add_argument(
+        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+
+
+    parser_b = subparsers.add_parser('receive-validate')
+    parser_b.add_argument(
+        'access', help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+    parser_b.add_argument(
+        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+
+
+    parser_c = subparsers.add_parser('receive-cleanup')
+    parser_c.add_argument(
+        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+
+
+    parser.parse_args()
+    
+    kwargs = vars(parser.parse_args())
+    
+    subparser = kwargs.pop('subparser')
+
+    if subparser == 'receive':
+        receive(**kwargs)
+    elif subparser == 'receive-cleanup':
+        receive_cleanup(**kwargs)
+    else:
+        receive_validate(**kwargs)
+    

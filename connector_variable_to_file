@@ -16,7 +16,8 @@ def receive(access, internals):
 
 def receive_validate(access):
     try:
-        json.loads(access)
+        with open(access) as json_data:
+            d = json.load(json_data)
         print('This is a valid file.')
         sys.exit(0)
 

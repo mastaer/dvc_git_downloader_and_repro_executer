@@ -11,10 +11,7 @@ def receive(access, internals):
     
     with open(internals) as json_data:
         d = json.load(json_data)
-    print('DEBUG_access: ',access)
-    print('DEBUG_internals',internals)
-    print('DEBUG_d',d)
-    copyfile(access, d)
+    copyfile(access, d['path'])
     sys.exit(0)
 
 def receive_validate(access):

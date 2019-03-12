@@ -14,7 +14,7 @@ def receive(access, internals):
     copyfile(access, d)
     sys.exit(0)
 
-def receive_validate(access, internals):
+def receive_validate(access):
     try:
         json.loads(access)
         print('This is a valid file.')
@@ -48,8 +48,6 @@ if __name__ == '__main__':
     parser_b = subparsers.add_parser('receive-validate')
     parser_b.add_argument(
         'access', help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
-    parser_b.add_argument(
-        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
 
 
     parser_c = subparsers.add_parser('receive-cleanup')
@@ -67,6 +65,9 @@ if __name__ == '__main__':
         receive(**kwargs)
     elif subparser == 'receive-cleanup':
         receive_cleanup(**kwargs)
-    else:
+    elif subparser == 'receive-validate':
         receive_validate(**kwargs)
+    else:
+        parser.print_help()
+        raise ValueError("You used the connector_variable_to_file with wrong parameters.")
     

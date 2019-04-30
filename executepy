@@ -4,25 +4,21 @@ from argparse import ArgumentParser
 import json
 import subprocess
 import os
+import time
 
-print('Start executer-python [version 0.1]')
+print('Start executer-python [version 0.2]')
 
 parser = ArgumentParser()
 
 parser.add_argument('git_authentication_json', help='')
-#parser.add_argument('git_own_email', help='')
-#parser.add_argument('git_own_username', help='')
-#parser.add_argument('git_own_password', help='')
 parser.add_argument('git_path_to_working_repository', help='')
 parser.add_argument('git_working_repository_owner', help='')
 parser.add_argument('git_working_repository_name', help='')
 parser.add_argument('git_name_of_branch', help='')
-
 parser.add_argument('dvc_authentication_json', help='')
-#parser.add_argument('dvc_own_username', help='')
-#parser.add_argument('dvc_own_password', help='')
 parser.add_argument('dvc_servername', help='')
 parser.add_argument('dvc_path_to_working_repository', help='')
+parser.add_argument('data_dir', help='')
 
 
 args = parser.parse_args()
@@ -32,6 +28,9 @@ with open(args.git_authentication_json) as f:
 with open(args.dvc_authentication_json) as f:
     dvc_authentication_json = json.load(f)
 
+
+def get_time()
+    return datetime.datetime.fromtimestamp(ts).strftime('(%Y-%m-%d %H:%M:%S)')
 
 git_own_username = git_authentication_json['username']
 git_own_email = git_authentication_json['email']
@@ -46,59 +45,72 @@ dvc_path_to_working_repository = args.dvc_path_to_working_repository
 dvc_own_username = dvc_authentication_json['username']
 dvc_own_password = dvc_authentication_json['password']
 
+data_dir = args.data_dir
+
 if __name__ == '__main__':
-    print('SET GIT GLOBAL CONFIGURATIONS')
+    print('SET GIT GLOBAL CONFIGURATIONS ' + get_time())
     command = 'git config --global user.email ' + git_own_email
+    print('\t'+str(command))
     subprocess.check_output(command, shell=True)
     command = 'git config --global user.name ' + git_own_username
+    print('\t'+str(command))
     subprocess.check_output(command, shell=True)
 
 
-    print('CLONE GIT REPOSITORY')
+    print('CLONE GIT REPOSITORY ' + get_time())
     # clone repository
     #git clone https://$2:$3@$1/$4/$5/
     git_complete_path_to_repo = 'https://' + git_own_username+":"+git_own_password+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name
     command = 'git clone ' + git_complete_path_to_repo
-    subprocess.check_output(command, shell=True)
+    print('\t' + 'git clone ' + 'https://' + git_own_username+":"+"$$$$$$$$$$$$$"+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name)
+    print(subprocess.check_output(command, shell=True))
 
-    print('CD TO PATH')
-    os.chdir(git_working_repository_name[:-4])
+    print('CD TO PATH ' + get_time())
+    print('\t chdir: '+git_working_repository_name[:-4])
+    print(os.chdir(git_working_repository_name[:-4]))
 
-    print('WRITE TO config.local FILE')
+    print('WRITE TO config.local FILE ' + get_time())
+    print("\n\t['remote \\\"nas\\\"']\n\turl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\n\tpassword = '"+"$$$$$$$$$$$$$"+"'\n\n\t[core]\n\tremote = nas")
     filecontent = "\n['remote \\\"nas\\\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
     command = "echo \"" + filecontent + "\" > .dvc/config.local"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('SWITCH GIT BRANCH')
+    print('SWITCH GIT BRANCH ' + get_time())
     command = 'git checkout ' + git_name_of_branch
-    subprocess.check_output(command, shell=True)
+    print('\t'+command)
+    print(subprocess.check_output(command, shell=True))
 
-    print('PULL FROM DVC')
+    print('SET A LINK TO A DATAFOLDER: ' + get_time())
+    command = 'ln -s ' + data_dir + ' data'
+    print('\t'+command)
+    print(subprocess.check_output(command, shell=True))
+
+    print('PULL FROM DVC ' + get_time())
     command = 'dvc pull'
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('START DVC REPRO -P')
+    print('START DVC REPRO -P ' + get_time())
     command = 'dvc repro -P'
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('GIT-ADD')
+    print('GIT-ADD ' + get_time())
     command = "git add -A"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('COMMIT AT GIT')
+    print('COMMIT AT GIT ' + get_time())
     command = "git commit -m 'run all pipelines of the branch "+git_name_of_branch+"'"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('COMMIT AT DVC')
+    print('COMMIT AT DVC ' + get_time())
     command = "dvc commit"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('PUSH TO DVC')
+    print('PUSH TO DVC ' + get_time())
     command = "dvc push"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
-    print('PUSH TO GIT')
+    print('PUSH TO GIT ' + get_time())
     command = "git push "+git_complete_path_to_repo+" --all"
-    subprocess.check_output(command, shell=True)
+    print(subprocess.check_output(command, shell=True))
 
 

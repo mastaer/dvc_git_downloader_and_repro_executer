@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import json
 import subprocess
 import os
+import datetime
 import time
 
 print('Start executer-python [version 0.2]')
@@ -30,7 +31,7 @@ with open(args.dvc_authentication_json) as f:
 
 
 def get_time():
-    return datetime.datetime.fromtimestamp(ts).strftime('(%Y-%m-%d %H:%M:%S)')
+    return datetime.datetime.fromtimestamp(time.time()).strftime('(%Y-%m-%d %H:%M:%S)')
 
 git_own_username = git_authentication_json['username']
 git_own_email = git_authentication_json['email']

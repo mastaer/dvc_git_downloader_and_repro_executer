@@ -29,7 +29,7 @@ with open(args.dvc_authentication_json) as f:
     dvc_authentication_json = json.load(f)
 
 
-def get_time()
+def get_time():
     return datetime.datetime.fromtimestamp(ts).strftime('(%Y-%m-%d %H:%M:%S)')
 
 git_own_username = git_authentication_json['username']
@@ -80,14 +80,15 @@ if __name__ == '__main__':
     print('\t'+command)
     print(subprocess.check_output(command, shell=True))
 
-    print('SET A LINK TO A DATAFOLDER: ' + get_time())
-    command = 'ln -s ' + data_dir + ' data'
-    print('\t'+command)
-    print(subprocess.check_output(command, shell=True))
-
     print('PULL FROM DVC ' + get_time())
     command = 'dvc pull'
     print(subprocess.check_output(command, shell=True))
+
+    if data_dir is not None and len(data_dir) > 0:
+        print('SET A LINK TO THE DATAFOLDER: ' + get_time())
+        command = 'ln -s ' + data_dir + ' data'
+        print('\t'+command)
+        print(subprocess.check_output(command, shell=True))
 
     print('START DVC REPRO -P ' + get_time())
     command = 'dvc repro -P'

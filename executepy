@@ -114,6 +114,14 @@ if __name__ == '__main__':
     command = "dvc commit"
     print(subprocess.check_output(command, shell=True))
 
+    print('PULL FROM DVC ' + get_time())
+    command = 'dvc pull'
+    print(subprocess.check_output(command, shell=True))
+
+    print('PULL FROM GIT ' + get_time())
+    command = 'git pull'
+    print(subprocess.check_output(command, shell=True))
+
     print('PUSH TO DVC ' + get_time())
     command = "dvc push"
     print(subprocess.check_output(command, shell=True))

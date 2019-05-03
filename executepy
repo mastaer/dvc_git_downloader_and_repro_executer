@@ -19,7 +19,8 @@ parser.add_argument('git_name_of_branch', help='')
 parser.add_argument('dvc_authentication_json', help='')
 parser.add_argument('dvc_servername', help='')
 parser.add_argument('dvc_path_to_working_repository', help='')
-parser.add_argument('data_dir', help='')
+parser.add_argument('--data_dir', default=None, help='')
+parser.add_argument('--dvc_file_to_execute', default=None, help='')
 
 
 args = parser.parse_args()
@@ -47,6 +48,7 @@ dvc_own_username = dvc_authentication_json['username']
 dvc_own_password = dvc_authentication_json['password']
 
 data_dir = args.data_dir
+dvc_file_to_execute = str(args.dvc_file_to_execute)
 
 if __name__ == '__main__':
     print('SET GIT GLOBAL CONFIGURATIONS ' + get_time())
@@ -85,15 +87,20 @@ if __name__ == '__main__':
     command = 'dvc pull'
     print(subprocess.check_output(command, shell=True))
 
-    if data_dir is not None and len(data_dir) > 0:
+    if data_dir is not None and len(data_dir) > 0 and data_dir[0] == '/':
         print('SET A LINK TO THE DATAFOLDER: ' + get_time())
         command = 'ln -s ' + data_dir + ' data'
         print('\t'+command)
         print(subprocess.check_output(command, shell=True))
 
-    print('START DVC REPRO -P ' + get_time())
-    command = 'dvc repro -P'
-    print(subprocess.check_output(command, shell=True))
+    if dvc_file_to_execute is None:
+        print('START DVC REPRO ' + dvc_file_to_execute + get_time())
+        command = 'dvc repro ' + dvc_file_to_execute
+        print(subprocess.check_output(command, shell=True))
+    else:
+        print('START DVC REPRO -P ' + get_time())
+        command = 'dvc repro -P'
+        print(subprocess.check_output(command, shell=True))
 
     print('GIT-ADD ' + get_time())
     command = "git add -A"

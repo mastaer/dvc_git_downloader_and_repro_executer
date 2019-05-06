@@ -7,14 +7,14 @@ import getpass
 import os
 from shutil import copyfile
 
-def receive(access, internals):
+def receive_file(access, internals):
     
     with open(internals) as json_data:
         d = json.load(json_data)
     copyfile(access, d['path'])
     sys.exit(0)
 
-def receive_validate(access):
+def receive_file_validate(access):
     try:
         with open(access) as json_data:
             d = json.load(json_data)
@@ -24,36 +24,28 @@ def receive_validate(access):
     except ValueError as e:
         print('invalid json: %s' % e)
         sys.exit(1) # or: raise
-    
 
-def receive_cleanup(internals):
-    with open(internals) as json_data:
-        d = json.load(json_data)
-    os.remove(d['path'])
-    sys.exit(0)
-
+def cli_version():
+    print('0.1')
 
 if __name__ == '__main__':
     
     parser = ArgumentParser()
     subparsers = parser.add_subparsers(dest='subparser')
 
-    parser_a = subparsers.add_parser('receive')
+    parser_a = subparsers.add_parser('receive-file')
     parser_a.add_argument(
         'access',help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
     parser_a.add_argument(
         'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
 
-
-    parser_b = subparsers.add_parser('receive-validate')
+    parser_b = subparsers.add_parser('receive-file-validate')
     parser_b.add_argument(
         'access', help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
 
 
-    parser_c = subparsers.add_parser('receive-cleanup')
-    parser_c.add_argument(
-        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
 
+    parser_c = subparsers.add_parser('cli-version')
 
     parser.parse_args()
     
@@ -61,12 +53,12 @@ if __name__ == '__main__':
     
     subparser = kwargs.pop('subparser')
 
-    if subparser == 'receive':
-        receive(**kwargs)
-    elif subparser == 'receive-cleanup':
-        receive_cleanup(**kwargs)
-    elif subparser == 'receive-validate':
-        receive_validate(**kwargs)
+    if subparser == 'receive-file':
+        receive_file(**kwargs)
+    elif subparser == 'receive-file-validate':
+        receive_file_validate(**kwargs)
+    elif subparser == 'cli-version':
+        cli_version()
     else:
         parser.print_help()
         raise ValueError("You used the connector_variable_to_file with wrong parameters.")

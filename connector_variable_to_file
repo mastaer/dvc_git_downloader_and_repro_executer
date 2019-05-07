@@ -2,28 +2,22 @@
 
 from argparse import ArgumentParser
 import json
-import sys
 import getpass
 import os
 from shutil import copyfile
 
-def receive_file(access, internals):
-    
-    with open(internals) as json_data:
-        d = json.load(json_data)
-    copyfile(access, d['path'])
-    sys.exit(0)
+def receive_file(access, local_file_path):
+    copyfile(access, local_file_path)
 
 def receive_file_validate(access):
     try:
         with open(access) as json_data:
             d = json.load(json_data)
         print('This is a valid file.')
-        sys.exit(0)
 
     except ValueError as e:
         print('invalid json: %s' % e)
-        sys.exit(1) # or: raise
+        exit(1) # or: raise
 
 def cli_version():
     print('0.1')

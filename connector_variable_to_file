@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser_a.add_argument(
         'access',help='The access_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
     parser_a.add_argument(
-        'internals', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
+        'local_file_path', help='The internal_json file see here for more information: https://www.curious-containers.cc/docs/developing-custom-connectors')
 
     parser_b = subparsers.add_parser('receive-file-validate')
     parser_b.add_argument(

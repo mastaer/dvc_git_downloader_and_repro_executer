@@ -93,7 +93,7 @@ if __name__ == '__main__':
         print('\t'+command)
         print(subprocess.check_output(command, shell=True))
 
-    if dvc_file_to_execute is None:
+    if dvc_file_to_execute is not None and dvc_file_to_execute is not '':
         print('START DVC REPRO ' + dvc_file_to_execute + get_time())
         command = 'dvc repro ' + dvc_file_to_execute
         print(subprocess.check_output(command, shell=True))

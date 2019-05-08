@@ -110,9 +110,9 @@ if __name__ == '__main__':
     command = "git commit -m 'run all pipelines of the branch "+git_name_of_branch+"'"
     print(subprocess.check_output(command, shell=True))
 
-    print('COMMIT AT DVC ' + get_time())
-    command = "dvc commit"
-    print(subprocess.check_output(command, shell=True))
+    #print('COMMIT AT DVC ' + get_time())
+    #command = "dvc commit"
+    #print(subprocess.check_output(command, shell=True))
 
     print('PULL FROM DVC ' + get_time())
     command = 'dvc pull'

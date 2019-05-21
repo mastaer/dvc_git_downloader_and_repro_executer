@@ -15,7 +15,7 @@ parser.add_argument('git_authentication_json', help='')
 parser.add_argument('git_path_to_working_repository', help='')
 parser.add_argument('git_working_repository_owner', help='')
 parser.add_argument('git_working_repository_name', help='')
-parser.add_argument('git_name_of_branch', help='')
+parser.add_argument('git_name_of_tag', help='')
 parser.add_argument('dvc_authentication_json', help='')
 parser.add_argument('dvc_servername', help='')
 parser.add_argument('dvc_path_to_working_repository', help='')
@@ -40,7 +40,7 @@ git_own_password = git_authentication_json['password']
 git_path_to_working_repository = args.git_path_to_working_repository
 git_working_repository_owner = args.git_working_repository_owner
 git_working_repository_name = args.git_working_repository_name
-git_name_of_branch = args.git_name_of_branch
+git_name_of_tag = args.git_name_of_tag
 
 dvc_servername = args.dvc_servername
 dvc_path_to_working_repository = args.dvc_path_to_working_repository
@@ -64,8 +64,8 @@ if __name__ == '__main__':
     # clone repository
     #git clone https://$2:$3@$1/$4/$5/
     git_complete_path_to_repo = 'https://' + git_own_username+":"+git_own_password+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name
-    command = 'git clone ' + git_complete_path_to_repo
-    print('\t' + 'git clone ' + 'https://' + git_own_username+":"+"$$$$$$$$$$$$$"+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name)
+    command = 'git clone --recurse-submodules ' + git_complete_path_to_repo
+    print('\t' + 'git clone --recurse-submodules ' + 'https://' + git_own_username+":"+"$$$$$$$$$$$$$"+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name)
     print(subprocess.check_output(command, shell=True))
 
     print('CD TO PATH ' + get_time())
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('SWITCH GIT BRANCH ' + get_time())
-    command = 'git checkout ' + git_name_of_branch
+    command = 'git checkout tags/' + git_name_of_tag + ' -b result_' + git_name_of_tag
     print('\t'+command)
     print(subprocess.check_output(command, shell=True))
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('COMMIT AT GIT ' + get_time())
-    command = "git commit -m 'run all pipelines of the branch "+git_name_of_branch+"'"
+    command = "git commit -m 'run all pipelines of the branch "+git_name_of_tag+"'"
     print(subprocess.check_output(command, shell=True))
 
     #print('COMMIT AT DVC ' + get_time())
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('PUSH TO GIT ' + get_time())
-    command = "git push "+git_complete_path_to_repo+" --all"
+    command = "git push -u origin result_" + git_name_of_tag
     print(subprocess.check_output(command, shell=True))
 
 

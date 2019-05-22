@@ -170,7 +170,7 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('PUSH TO GIT   ' + get_time())
-    command = "git push -u origin result_" + git_name_of_tag
+    command = "git push -u origin b" + git_name_of_tag
     print(subprocess.check_output(command, shell=True))
 
 

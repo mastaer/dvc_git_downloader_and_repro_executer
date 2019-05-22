@@ -118,8 +118,8 @@ if __name__ == '__main__':
     if dvc_files_to_execute is not None:
         for f in dvc_files_to_execute:
             if f.endswith('.dvc'):
-                print('START DVC REPRO ' + dvc_file_to_execute + '   ' + get_time())
-                command = 'dvc repro ' + dvc_file_to_execute
+                print('START DVC REPRO ' + f + '   ' + get_time())
+                command = 'dvc repro ' + f
                 print(subprocess.check_output(command, shell=True))
             else:
                 print('WARNING: A file that should be execute ('+f+') does not ends with .dvc. The job is skipped!')

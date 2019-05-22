@@ -101,7 +101,10 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('SWITCH GIT BRANCH   ' + get_time())
-    command = 'git checkout tags/' + git_name_of_tag + ' -b b' + git_name_of_tag
+    if dvc_files_to_execute is None:
+        command = 'git checkout tags/' + git_name_of_tag + ' -b b' + git_name_of_tag
+    else: 
+        command = 'git checkout tags/' + git_name_of_tag + ' -b b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
     print('\t'+command)
     print(subprocess.check_output(command, shell=True))
 
@@ -170,7 +173,9 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('PUSH TO GIT   ' + get_time())
-    command = "git push -u origin b" + git_name_of_tag
+    if dvc_files_to_execute is None:
+        command = 'git push -u origin b' + git_name_of_tag
+    else:
+        command = 'git push -u origin b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
     print(subprocess.check_output(command, shell=True))
-
 

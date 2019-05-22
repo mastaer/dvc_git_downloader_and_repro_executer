@@ -6,6 +6,7 @@ import subprocess
 import os
 import datetime
 import time
+import shutil
 
 print('Start executer-python [version 0.2]')
 
@@ -34,6 +35,24 @@ with open(args.dvc_authentication_json) as f:
 def get_time():
     return datetime.datetime.fromtimestamp(time.time()).strftime('(%Y-%m-%d %H:%M:%S)')
 
+
+def get_all_dvc_files_that_are_not_needed(dvc_filenames)
+    from dvc.repo import Repo
+    import networkx as nx
+    dvcrepo = Repo('.')
+    pipelines = dvcrepo.pipelines()
+    descendants_stages = dvc_filenames.copy()
+
+    for G in pipelines:
+        try:
+            for dvc_filename in dvc_filenames:
+                descendants_stages.extend(list(nx.descendants(G,dvc_filename)))
+        except:
+            continue
+
+    all_stages = [s.relpath for s in dvcrepo.stages()]
+    return [s for s in all_stages if s not in descendants_stages]
+
 git_own_username = git_authentication_json['username']
 git_own_email = git_authentication_json['email']
 git_own_password = git_authentication_json['password']
@@ -48,10 +67,13 @@ dvc_own_username = dvc_authentication_json['username']
 dvc_own_password = dvc_authentication_json['password']
 
 data_dir = args.data_dir
-dvc_file_to_execute = str(args.dvc_file_to_execute)
+if args.dvc_file_to_execute is None
+    dvc_files_to_execute = None
+else:
+    dvc_files_to_execute = args.dvc_file_to_execute.split(',')
 
 if __name__ == '__main__':
-    print('SET GIT GLOBAL CONFIGURATIONS ' + get_time())
+    print('SET GIT GLOBAL CONFIGURATIONS   ' + get_time())
     command = 'git config --global user.email ' + git_own_email
     print('\t'+str(command))
     subprocess.check_output(command, shell=True)
@@ -60,7 +82,7 @@ if __name__ == '__main__':
     subprocess.check_output(command, shell=True)
 
 
-    print('CLONE GIT REPOSITORY ' + get_time())
+    print('CLONE GIT REPOSITORY   ' + get_time())
     # clone repository
     #git clone https://$2:$3@$1/$4/$5/
     git_complete_path_to_repo = 'https://' + git_own_username+":"+git_own_password+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name
@@ -68,65 +90,85 @@ if __name__ == '__main__':
     print('\t' + 'git clone --recurse-submodules ' + 'https://' + git_own_username+":"+"$$$$$$$$$$$$$"+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name)
     print(subprocess.check_output(command, shell=True))
 
-    print('CD TO PATH ' + get_time())
+    print('CD TO PATH   ' + get_time())
     print('\t chdir: '+git_working_repository_name[:-4])
     print(os.chdir(git_working_repository_name[:-4]))
 
-    print('WRITE TO config.local FILE ' + get_time())
+    print('WRITE TO config.local FILE   ' + get_time())
     print("\n\t['remote \\\"nas\\\"']\n\turl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\n\tpassword = '"+"$$$$$$$$$$$$$"+"'\n\n\t[core]\n\tremote = nas")
     filecontent = "\n['remote \\\"nas\\\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
     command = "echo \"" + filecontent + "\" > .dvc/config.local"
     print(subprocess.check_output(command, shell=True))
 
-    print('SWITCH GIT BRANCH ' + get_time())
-    command = 'git checkout tags/' + git_name_of_tag + ' -b result_' + git_name_of_tag
+    print('SWITCH GIT BRANCH   ' + get_time())
+    command = 'git checkout tags/' + git_name_of_tag + ' -b b' + git_name_of_tag
     print('\t'+command)
     print(subprocess.check_output(command, shell=True))
 
-    print('PULL FROM DVC ' + get_time())
+    print('PULL FROM DVC   ' + get_time())
     command = 'dvc pull'
     print(subprocess.check_output(command, shell=True))
 
     if data_dir is not None and len(data_dir) > 0 and data_dir[0] == '/':
-        print('SET A LINK TO THE DATAFOLDER: ' + get_time())
+        print('SET A LINK TO THE DATAFOLDER   ' + get_time())
         command = 'ln -s ' + data_dir + ' data'
         print('\t'+command)
         print(subprocess.check_output(command, shell=True))
 
-    if dvc_file_to_execute is not None and dvc_file_to_execute is not '' and dvc_file_to_execute.endswith('.dvc'):
-        print('START DVC REPRO ' + dvc_file_to_execute + get_time())
-        command = 'dvc repro ' + dvc_file_to_execute
-        print(subprocess.check_output(command, shell=True))
+    if dvc_files_to_execute is not None:
+        for f in dvc_files_to_execute:
+            if f.endswith('.dvc'):
+                print('START DVC REPRO ' + dvc_file_to_execute + '   ' + get_time())
+                command = 'dvc repro ' + dvc_file_to_execute
+                print(subprocess.check_output(command, shell=True))
+            else:
+                print('WARNING: A file that should be execute ('+f+') does not ends with .dvc. The job is skipped!')
     else:
-        print('START DVC REPRO -P ' + get_time())
+        print('START DVC REPRO -P   ' + get_time())
         command = 'dvc repro -P'
         print(subprocess.check_output(command, shell=True))
+
+    print('WRITE RED-YML-File TO MAIN-Directory   ' + get_time())
+    paths = ['.dvc_cc/'+git_name_of_tag+'/'+f for f in dvc_files_to_execute]
+    with open('cc_ececution_file.red.yml',"w") as f:
+        print("batches:", file=f)
+        for path in paths:
+            with open(path,"r") as r:
+                print(r.read(), file=f)
+        with open('.dvc_cc/cc_config.yml',"r") as r:
+            print(r.read(), file=f)
+
+    if dvc_files_to_execute is not None:
+        print('REMOVE ALL DVC FILES THAT ARE NOT NEEDED   ' + get_time())
+        files = get_all_dvc_files_that_are_not_needed(dvc_files_to_execute)
+        for f in files:
+            print('   - delete File: ' + f)
+            os.remove(f)
+
+    print('Remove ".dvc_cc"-direcotry   ' + get_time())
+    shutil.rmtree('.dvc_cc')
+
 
     print('GIT-ADD ' + get_time())
     command = "git add -A"
     print(subprocess.check_output(command, shell=True))
 
-    print('COMMIT AT GIT ' + get_time())
-    command = "git commit -m 'run all pipelines of the branch "+git_name_of_tag+"'"
+    print('COMMIT AT GIT   ' + get_time())
+    if dvc_files_to_execute is not None:
+        command = "git commit -m 'run "+str(dvc_files_to_execute)+" in the experiment setup: " + git_name_of_tag + "'"
+    else:
+        command = "git commit -m 'run all dvc-files in the experiment setup: " + git_name_of_tag + "'"
     print(subprocess.check_output(command, shell=True))
 
-    #print('COMMIT AT DVC ' + get_time())
-    #command = "dvc commit"
-    #print(subprocess.check_output(command, shell=True))
+    print('COMMIT AT DVC   ' + get_time())
+    command = "dvc commit"
+    print(subprocess.check_output(command, shell=True))
 
-    #print('PULL FROM DVC ' + get_time())
-    #command = 'dvc pull'
-    #print(subprocess.check_output(command, shell=True))
-
-    #print('PULL FROM GIT ' + get_time())
-    #command = 'git pull'
-    #print(subprocess.check_output(command, shell=True))
-
-    print('PUSH TO DVC ' + get_time())
+    print('PUSH TO DVC   ' + get_time())
     command = "dvc push"
     print(subprocess.check_output(command, shell=True))
 
-    print('PUSH TO GIT ' + get_time())
+    print('PUSH TO GIT   ' + get_time())
     command = "git push -u origin result_" + git_name_of_tag
     print(subprocess.check_output(command, shell=True))
 

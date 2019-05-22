@@ -67,7 +67,7 @@ dvc_own_username = dvc_authentication_json['username']
 dvc_own_password = dvc_authentication_json['password']
 
 data_dir = args.data_dir
-if args.dvc_file_to_execute is None
+if args.dvc_file_to_execute is None:
     dvc_files_to_execute = None
 else:
     dvc_files_to_execute = args.dvc_file_to_execute.split(',')

@@ -129,7 +129,7 @@ if __name__ == '__main__':
         print(subprocess.check_output(command, shell=True))
 
     print('WRITE RED-YML-File TO MAIN-Directory   ' + get_time())
-    paths = ['.dvc_cc/'+git_name_of_tag+'/'+f for f in dvc_files_to_execute]
+    paths = ['.dvc_cc/'+git_name_of_tag+'/'+f.replace('/','___') for f in dvc_files_to_execute]
     with open('cc_ececution_file.red.yml',"w") as f:
         print("batches:", file=f)
         for path in paths:

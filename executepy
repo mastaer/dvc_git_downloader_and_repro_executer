@@ -134,12 +134,10 @@ if __name__ == '__main__':
     print('WRITE RED-YML-File TO MAIN-Directory   ' + get_time())
     #TODO HANDLE IF dvc_files_to_execute is NONE !!!
     path = '.dvc_cc/'+git_name_of_tag+'/'+args.dvc_file_to_execute.replace('/','___').replace(',','_') + '.yml'
-    paths = ['.dvc_cc/'+git_name_of_tag+'/'+f.replace('/','___') + '.yml' for f in dvc_files_to_execute]
     with open('cc_execution_file.red.yml',"w") as f:
         print("batches:", file=f)
-        for path in paths:
-            with open(path,"r") as r:
-                print(r.read(), file=f)
+        with open(path,"r") as r:
+            print(r.read(), file=f)
         with open('.dvc_cc/cc_config.yml',"r") as r:
             print(r.read(), file=f)
 

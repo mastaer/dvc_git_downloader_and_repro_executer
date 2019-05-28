@@ -180,12 +180,19 @@ if __name__ == '__main__':
             else:
                 name_of_new_branch = 'b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
 
-            command = 'git push -u origin ' + name_of_new_branch
+            command = 'git push -u origin ' + name_of_new_branch + ':' + name_of_new_branch
             if num_of_tries >= 2:
                 command = command + '_' + str(num_of_tries)
 
             print(subprocess.check_output(command, shell=True))
+            pushed_successfull = True
         except:
-            num_of_tries += 1
+            if num_of_tries < 1000:
+                # TODO: Smarter way would be to ask already used indexing.
+                num_of_tries += 1
+            else:
+                raise ValueError('It was tried 1000 times to push to the remote. This was not possible.')
+
+
 
 

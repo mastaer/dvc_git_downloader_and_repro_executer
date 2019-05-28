@@ -151,7 +151,6 @@ if __name__ == '__main__':
     print('Remove ".dvc_cc"-direcotry   ' + get_time())
     shutil.rmtree('.dvc_cc')
 
-
     print('GIT-ADD ' + get_time())
     command = "git add -A"
     print(subprocess.check_output(command, shell=True))
@@ -172,11 +171,21 @@ if __name__ == '__main__':
     print(subprocess.check_output(command, shell=True))
 
     print('PUSH TO GIT   ' + get_time())
-    if dvc_files_to_execute is None:
-        command = 'git push -u origin b' + git_name_of_tag
-    else:
-        command = 'git push -u origin b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
-    print(subprocess.check_output(command, shell=True))
+    pushed_successfull = False
+    num_of_tries = 1
+    while pushed_successfull == False:
+        try:
+            if dvc_files_to_execute is None:
+                name_of_new_branch = 'b' + git_name_of_tag
+            else:
+                name_of_new_branch = 'b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
 
+            command = 'git push -u origin ' + name_of_new_branch
+            if num_of_tries >= 2:
+                command = command + '_' + str(num_of_tries)
+
+            print(subprocess.check_output(command, shell=True))
+        except:
+            num_of_tries += 1
 
 

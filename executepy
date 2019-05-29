@@ -88,7 +88,7 @@ if __name__ == '__main__':
     git_complete_path_to_repo = 'https://' + git_own_username+":"+git_own_password+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name
     command = 'git clone --recurse-submodules ' + git_complete_path_to_repo
     print('\t' + 'git clone --recurse-submodules ' + 'https://' + git_own_username+":"+"$$$$$$$$$$$$$"+"@"+git_path_to_working_repository + '/' + git_working_repository_owner + '/'+ git_working_repository_name)
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('CD TO PATH   ' + get_time())
     print('\t chdir: '+git_working_repository_name[:-4])
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print("\n\t['remote \\\"nas\\\"']\n\turl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\n\tpassword = '"+"$$$$$$$$$$$$$"+"'\n\n\t[core]\n\tremote = nas")
     filecontent = "\n['remote \\\"nas\\\"']\nurl = ssh://"+dvc_own_username+"@"+dvc_servername+dvc_path_to_working_repository+"\npassword = '"+dvc_own_password+"'\n\n[core]\nremote = nas"
     command = "echo \"" + filecontent + "\" > .dvc/config.local"
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('SWITCH GIT BRANCH   ' + get_time())
     if dvc_files_to_execute is None:
@@ -106,30 +106,30 @@ if __name__ == '__main__':
     else: 
         command = 'git checkout tags/' + git_name_of_tag + ' -b b' + git_name_of_tag + '___' + str(dvc_files_to_execute).replace('/','_').replace(',','_').replace('[','').replace(']','').replace(' ','')
     print('\t'+command)
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('PULL FROM DVC   ' + get_time())
     command = 'dvc pull'
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     if data_dir is not None and len(data_dir) > 0 and data_dir[0] == '/':
         print('SET A LINK TO THE DATAFOLDER   ' + get_time())
         command = 'ln -s ' + data_dir + ' data'
         print('\t'+command)
-        print(subprocess.check_output(command, shell=True))
+        print(subprocess.check_output(command, shell=True).decode())
 
     if dvc_files_to_execute is not None:
         for f in dvc_files_to_execute:
             if f.endswith('.dvc'):
                 print('START DVC REPRO ' + f + '   ' + get_time())
                 command = 'dvc repro ' + f
-                print(subprocess.check_output(command, shell=True))
+                print(subprocess.check_output(command, shell=True).decode())
             else:
                 print('WARNING: A file that should be execute ('+f+') does not ends with .dvc. The job is skipped!')
     else:
         print('START DVC REPRO -P   ' + get_time())
         command = 'dvc repro -P'
-        print(subprocess.check_output(command, shell=True))
+        print(subprocess.check_output(command, shell=True).decode())
 
     print('WRITE RED-YML-File TO MAIN-Directory   ' + get_time())
     #TODO HANDLE IF dvc_files_to_execute is NONE !!!
@@ -153,22 +153,22 @@ if __name__ == '__main__':
 
     print('GIT-ADD ' + get_time())
     command = "git add -A"
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('COMMIT AT GIT   ' + get_time())
     if dvc_files_to_execute is not None:
         command = "git commit -m 'run "+str(dvc_files_to_execute)+" in the experiment setup: " + git_name_of_tag + "'"
     else:
         command = "git commit -m 'run all dvc-files in the experiment setup: " + git_name_of_tag + "'"
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('COMMIT AT DVC   ' + get_time())
     command = "dvc commit"
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('PUSH TO DVC   ' + get_time())
     command = "dvc push"
-    print(subprocess.check_output(command, shell=True))
+    print(subprocess.check_output(command, shell=True).decode())
 
     print('PUSH TO GIT   ' + get_time())
     pushed_successfull = False
@@ -184,7 +184,7 @@ if __name__ == '__main__':
             if num_of_tries >= 2:
                 command = command + '_' + str(num_of_tries)
 
-            print(subprocess.check_output(command, shell=True))
+            print(subprocess.check_output(command, shell=True).decode())
             pushed_successfull = True
         except:
             if num_of_tries < 1000:

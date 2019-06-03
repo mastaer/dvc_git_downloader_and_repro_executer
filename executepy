@@ -7,6 +7,7 @@ import os
 import datetime
 import time
 import shutil
+import tensorflow as tf
 
 print('Start executer-python [version 0.2]')
 
@@ -54,6 +55,11 @@ def write_readme():
         command = 'pip list'
         software = subprocess.check_output(command, shell=True).decode()
         print(software,file=f)
+
+        print('',file=f)
+        print('',file=f)
+        print('',file=f)
+        print(str(tf.test.is_gpu_available()),file=f)
 
 
 def get_all_dvc_files_that_are_not_needed(dvc_filenames):

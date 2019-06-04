@@ -46,15 +46,38 @@ def write_readme():
         print()
         print('## How to run this branch.', file = f)
 
+        ## collapsible markdown?
+
+<details><summary>CLICK ME</summary>
+<p>
+
+#### yes, even hidden code blocks!
+
+```python
+print("hello world!")
+```
+
+</p>
+</details>
+
         print('## Systeminformation - Hardware', file = f)
         command = 'lshw -c processor,memory -short'
         sysinfo = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
         print(sysinfo,file=f)
 
         print('## Systeminformation - GPU',file=f)
+
+
+
+
+
+
+
+
         command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
         gpus = subprocess.check_output(command, shell=True).decode().split(\n)
-
+        print('<details><summary>###Systeminformation - GPU</summary>', file=f)
+        #print('<p>', file=f)
         print('```'file=f)
         for i in range(len(gpus)-1):
             gpu = gpus[i].split(',')
@@ -62,6 +85,8 @@ def write_readme():
             if i == 0:
                 print('='*52,file=f)
         print('```'file=f)
+        #print('</p>', file=f)
+        print('</details>', file=f)
 
         print('## Systeminformation - Software', file = f)
         command = 'pip list'

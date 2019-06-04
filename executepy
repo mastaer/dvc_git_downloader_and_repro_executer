@@ -53,8 +53,15 @@ def write_readme():
 
         print('## Systeminformation - GPU',file=f)
         command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
-        gpus = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
-        print(gpus,file=f)
+        gpus = subprocess.check_output(command, shell=True).decode().split(\n)
+
+        print('```'file=f)
+        for i in range(len(gpus)-1):
+            gpu = gpus[i].split(',')
+            print('%30s%22s'% (gpu[0], gpu[1]),file=f)
+            if i == 0:
+                print('='*52,file=f)
+        print('```'file=f)
 
         print('## Systeminformation - Software', file = f)
         command = 'pip list'

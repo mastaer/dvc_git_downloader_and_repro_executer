@@ -55,7 +55,7 @@ def write_readme():
 
         # GPUs
         command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
-        gpus = subprocess.check_output(command, shell=True).decode().split(\n)
+        gpus = subprocess.check_output(command, shell=True).decode().split('\n')
         gpus_output = '```'
         for i in range(len(gpus)-1):
             gpu = gpus[i].split(',')

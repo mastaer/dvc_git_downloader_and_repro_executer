@@ -59,9 +59,9 @@ def write_readme():
         gpus_output = '```\n'
         for i in range(len(gpus)-1):
             gpu = gpus[i].split(',')
-            gpus_output = gpus_output + ('%30s%22s'% (gpu[0], gpu[1]))
+            gpus_output = gpus_output + ('%30s%22s\n'% (gpu[0], gpu[1]))
             if i == 0:
-                gpus_output = gpus_output + ('='*52)
+                gpus_output = gpus_output + ('='*52) + '\n'
         gpus_output = gpus_output + '\n```'
         print(collabs_text('GPU(s)',gpus_output),file=f)
 

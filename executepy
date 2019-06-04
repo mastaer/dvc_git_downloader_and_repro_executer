@@ -33,7 +33,7 @@ with open(args.dvc_authentication_json) as f:
     dvc_authentication_json = json.load(f)
 
 
-def get_command_list_in_right_order()
+def get_command_list_in_right_order():
     from dvc.repo import Repo as DVCRepo
     dvcrepo = DVCRepo('.')
 

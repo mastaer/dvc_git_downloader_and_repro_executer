@@ -51,10 +51,17 @@ def write_readme():
         sysinfo = subprocess.check_output(command, shell=True).decode()
         print(sysinfo,file=f)
 
+        print('## Systeminformation - GPU',file=f)
+        command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
+        gpus = subprocess.check_output(command, shell=True).decode()
+        print(gpus,file=f)
+
         print('## Systeminformation - Software', file = f)
         command = 'pip list'
         software = subprocess.check_output(command, shell=True).decode()
         print(software,file=f)
+
+
 
         print('',file=f)
         print('',file=f)

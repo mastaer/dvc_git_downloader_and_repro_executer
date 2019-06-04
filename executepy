@@ -47,13 +47,13 @@ def write_readme():
         print('## How to run this branch.', file = f)
 
         print('## Systeminformation - Hardware', file = f)
-        command = 'lshw -c display,processor,memory -short'
-        sysinfo = subprocess.check_output(command, shell=True).decode()
+        command = 'lshw -c processor,memory -short'
+        sysinfo = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
         print(sysinfo,file=f)
 
         print('## Systeminformation - GPU',file=f)
         command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
-        gpus = subprocess.check_output(command, shell=True).decode()
+        gpus = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
         print(gpus,file=f)
 
         print('## Systeminformation - Software', file = f)

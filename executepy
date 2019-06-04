@@ -37,8 +37,8 @@ def get_time():
     return datetime.datetime.fromtimestamp(time.time()).strftime('(%Y-%m-%d %H:%M:%S)')
 
 def collabs_text(title, text):
-    pretext = '\n<details><summary>'+title+'</summary>\n<p>\n\n'
-    posttext = '\n\n</p>\n</details>'
+    pretext = '\n\n<details><summary>'+title+'</summary>\n<p>\n\n'
+    posttext = '\n\n</p>\n</details>\n\n'
     return pretext+text+posttext
 
 def write_readme():
@@ -56,7 +56,7 @@ def write_readme():
         # GPUs
         command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
         gpus = subprocess.check_output(command, shell=True).decode().split('\n')
-        gpus_output = '```'
+        gpus_output = '```\n'
         for i in range(len(gpus)-1):
             gpu = gpus[i].split(',')
             gpus_output = gpus_output + ('%30s%22s'% (gpu[0], gpu[1]))
@@ -66,24 +66,12 @@ def write_readme():
         print(collabs_text('GPU(s)',gpus_output),file=f)
 
         # Other HARDWARE
-        
-
-
         command = 'lshw -c processor,memory -short'
         sysinfo = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
-        print(sysinfo,file=f)
+
         print(collabs_text('Other Hardware',sysinfo),file=f)
 
-
-
-
-
-
-
-
-
-
-        print('## Systeminformation - Software', file = f)
+        # Software
         command = 'pip list'
         software = '```\n' +subprocess.check_output(command, shell=True).decode()+ '\n```'
         print(collabs_text('Software',software),file=f)

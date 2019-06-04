@@ -36,6 +36,10 @@ with open(args.dvc_authentication_json) as f:
 def get_time():
     return datetime.datetime.fromtimestamp(time.time()).strftime('(%Y-%m-%d %H:%M:%S)')
 
+def collabs_text(title, text):
+    pretext = '\n<details><summary>'+title+'</summary>\n<p>\n\n'
+    posttext = '\n\n</p>\n</details>'
+    return pretext+text+posttext
 
 def write_readme():
     with open('README.md',"w") as f:
@@ -46,27 +50,29 @@ def write_readme():
         print()
         print('## How to run this branch.', file = f)
 
-        ## collapsible markdown?
+        print('## Executed System', file = f)
+        print('The scipt runned on the following system:', file = f)
 
-<details><summary>CLICK ME</summary>
-<p>
+        # GPUs
+        command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
+        gpus = subprocess.check_output(command, shell=True).decode().split(\n)
+        gpus_output = '```'
+        for i in range(len(gpus)-1):
+            gpu = gpus[i].split(',')
+            gpus_output = gpus_output + ('%30s%22s'% (gpu[0], gpu[1]))
+            if i == 0:
+                gpus_output = gpus_output + ('='*52)
+        gpus_output = gpus_output + '\n```'
+        print(collabs_text('GPU(s)',gpus_output),file=f)
 
-#### yes, even hidden code blocks!
+        # Other HARDWARE
+        
 
-```python
-print("hello world!")
-```
 
-</p>
-</details>
-
-        print('## Systeminformation - Hardware', file = f)
         command = 'lshw -c processor,memory -short'
         sysinfo = '```\n' + subprocess.check_output(command, shell=True).decode() + '\n```'
         print(sysinfo,file=f)
-
-        print('## Systeminformation - GPU',file=f)
-
+        print(collabs_text('Other Hardware',sysinfo),file=f)
 
 
 
@@ -74,31 +80,14 @@ print("hello world!")
 
 
 
-        command = 'nvidia-smi --query-gpu=gpu_name,memory.total --format=csv'
-        gpus = subprocess.check_output(command, shell=True).decode().split(\n)
-        print('<details><summary>###Systeminformation - GPU</summary>', file=f)
-        #print('<p>', file=f)
-        print('```'file=f)
-        for i in range(len(gpus)-1):
-            gpu = gpus[i].split(',')
-            print('%30s%22s'% (gpu[0], gpu[1]),file=f)
-            if i == 0:
-                print('='*52,file=f)
-        print('```'file=f)
-        #print('</p>', file=f)
-        print('</details>', file=f)
+
+
 
         print('## Systeminformation - Software', file = f)
         command = 'pip list'
-        software = subprocess.check_output(command, shell=True).decode()
-        print(software,file=f)
+        software = '```\n' +subprocess.check_output(command, shell=True).decode()+ '\n```'
+        print(collabs_text('Software',software),file=f)
 
-
-
-        print('',file=f)
-        print('',file=f)
-        print('',file=f)
-        print(str(tf.test.is_gpu_available()),file=f)
 
 
 def get_all_dvc_files_that_are_not_needed(dvc_filenames):
